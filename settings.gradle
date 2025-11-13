@@ -1,0 +1,3 @@
+rootProject.name = 'GreenChainStores'
+
+include 'GreenStore', 'client', 'share'
