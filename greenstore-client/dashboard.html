@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>داشبورد کاربر</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="form-container">
+    <h2>داشبورد کاربری</h2>
+
+    <div>
+        <h3>موجودی: <span id="balance">0</span> تومان</h3>
+        <button onclick="increaseBalance()">افزایش موجودی</button>
+    </div>
+
+    <div>
+        <h3>جستجو و فیلتر محصولات</h3>
+        <input type="text" id="search" placeholder="نام کالا">
+        <select id="moodFilter">
+            <option value="">all</option>
+            <option value="happy">happy</option>
+            <option value="sad">sad</option>
+            <option value="boring">boring</option>
+            <option value="energitic">energitic</option>
+        </select>
+        <button onclick="searchProducts()">جستجو</button>
+    </div>
+
+    <div>
+        <button onclick="searchProducts()">سبد خرید</button>
+        <ul id="cartList"></ul>
+    </div>
+    <div>
+        <button onclick="searchProducts()">ویرایش اطلاعات کاربری</button>
+        <ul id="edituserinfo"></ul>
+    </div>
+</div>
+
+<script src="js/utils.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

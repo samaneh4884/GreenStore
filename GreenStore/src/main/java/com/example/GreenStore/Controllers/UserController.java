@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @PostMapping("/addBalance")
-    public ResponseEntity<String> addBalance(@RequestHeader("Authorization") String token, @RequestParam Double balance) {
+    public ResponseEntity<String> addBalance(@RequestHeader("Authorization") String token, @RequestParam double balance) {
         String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
@@ -59,5 +59,15 @@ public class UserController {
         userRepository.save(user);
         return new ResponseEntity<>("your balance is now " + user.getBalance(), HttpStatus.OK);
     }
+    @GetMapping("/getBalance")
+    public ResponseEntity<Double> getBalance(@RequestHeader("Authorization") String token) {
+        String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(user.getBalance(), HttpStatus.OK);
+    }
+
 
 }
