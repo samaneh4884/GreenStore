@@ -30,10 +30,4 @@ public class Product {
     private String texture;
 
     private int quantity;
-
-
-
-
-
-
 }

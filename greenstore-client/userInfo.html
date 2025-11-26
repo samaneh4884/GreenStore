@@ -1,0 +1,43 @@
+<head>
+    <meta charset="UTF-8">
+    <title>اطلاعات کاربری</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="form-container">
+    <h2>اطلاعات کاربری</h2>
+
+    <div>
+        <h3>مشخصات شما</h3>
+        <ul id="userInfoBox"></ul>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>تغییر ایمیل</h3>
+        <input id="newEmail" type="text" placeholder="ایمیل جدید">
+        <button onclick="changeEmail()">ذخیره ایمیل جدید</button>
+    </div>
+
+    <div>
+        <h3>تغییر آدرس</h3>
+        <input id="newAddress" type="text" placeholder="آدرس جدید">
+        <button onclick="changeAddress()">ذخیره آدرس جدید</button>
+    </div>
+    <div class="change-pass-box">
+        <input type="password" id="oldPassword" placeholder="پسورد فعلی">
+        <input type="password" id="newPassword" placeholder="پسورد جدید">
+        <input type="password" id="confirmPassword" placeholder="تکرار پسورد جدید">
+        <button onclick="changePassword()">تغییر پسورد</button>
+    </div>
+    <p id="passResponse"></p>
+
+    <br>
+    <button onclick="goBack()">بازگشت به داشبورد</button>
+</div>
+
+<script src="js/userInfo.js"></script>
+</body>
+</html>
