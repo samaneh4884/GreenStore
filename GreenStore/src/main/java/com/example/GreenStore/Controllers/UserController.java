@@ -9,7 +9,11 @@ import com.example.GreenStore.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/buy")
@@ -48,7 +53,7 @@ public class UserController {
     }
 
     @PostMapping("/addBalance")
-    public ResponseEntity<String> addBalance(@RequestHeader("Authorization") String token, @RequestParam Double balance) {
+    public ResponseEntity<String> addBalance(@RequestHeader("Authorization") String token, @RequestParam double balance) {
         String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
@@ -59,5 +64,86 @@ public class UserController {
         userRepository.save(user);
         return new ResponseEntity<>("your balance is now " + user.getBalance(), HttpStatus.OK);
     }
+    @GetMapping("/getBalance")
+    public ResponseEntity<Double> getBalance(@RequestHeader("Authorization") String token) {
+        String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(user.getBalance(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getUserInfo")
+    public ResponseEntity<User> editUserInfo(@RequestHeader ("Authorization") String token) {
+        User user = userRepository.findByUsername(jwtUtil.extractUsername(token.replace("Bearer ", ""))).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+    @PostMapping("/changeEmail")
+    public ResponseEntity<String> changeEmail(@RequestHeader("Authorization") String token, @RequestParam String email) {
+        String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+        user.setEmail(email);
+        userRepository.save(user);
+        return new ResponseEntity<>("your email is now " + user.getEmail(), HttpStatus.OK);
+    }
+    @PostMapping("/changeAddress")
+    public ResponseEntity<String> changeAddress(@RequestHeader("Authorization") String token, @RequestParam String address) {
+        String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+        user.setAddress(address);
+        userRepository.save(user);
+        return new ResponseEntity<>("your address is now " + user.getAddress(), HttpStatus.OK);
+    }
+    @PostMapping("/changePassword")
+    public ResponseEntity<?> changePassword(
+            @RequestHeader("Authorization") String token,
+            @RequestBody Map<String, String> body
+    ) {
+        try {
+            String oldPassword = body.get("oldPassword");
+            String newPassword = body.get("newPassword");
+
+            String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
+            User user = userRepository.findByUsername(username).orElse(null);
+
+            if (user == null) {
+                return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            }
+            if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+                return new ResponseEntity<>("Old password is incorrect", HttpStatus.UNAUTHORIZED);
+            }
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+            String newToken = jwtUtil.generateToken(user.getUsername(),user.getPassword());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Password changed successfully");
+            response.put("token", newToken);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error changing password", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    //search products by mood
+    //shopping cart
+    //store dashboard
+    //add product
+    //edit product
+    //remove product
+    //buy product
+    
+
 
 }
