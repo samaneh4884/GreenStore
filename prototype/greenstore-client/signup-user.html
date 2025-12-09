@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8" />
+    <title>ثبت نام</title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f3f3f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 350px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            border: none;
+            background: #28a745;
+            color: white;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #218838;
+        }
+
+        .message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="form-container">
+    <h2>ثبت نام کاربر</h2>
+
+    <input type="text" id="username" placeholder="نام کاربری">
+    <input type="password" id="password" placeholder="رمز عبور">
+    <input type="email" id="email" placeholder="ایمیل">
+    <input type="text" id="address" placeholder="آدرس">
+
+    <button onclick="registerUser()">ثبت نام</button>
+
+    <div id="response" class="message"></div>
+</div>
+
+<script>
+
+    function registerUser() {
+        window.location.href = "index.html";
+        // const user = {
+        //     username: document.getElementById("username").value,
+        //     password: document.getElementById("password").value,
+        //     email: document.getElementById("email").value,
+        //     address: document.getElementById("address").value
+        // };
+
+        // fetch("http://localhost:8080/auth/SignUpUser", {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     body: JSON.stringify(user)
+        // })
+        // .then(async res => {
+
+        //     const text = await res.text();
+        //     const messageDiv = document.getElementById("response");
+
+        //     if (res.ok) {
+        //         messageDiv.style.color = "green";
+        //         messageDiv.innerText = text;
+        //         setTimeout(()=> window.location.href="index.html", 1500);
+        //     } else {
+        //         messageDiv.style.color = "red";
+        //         messageDiv.innerText = text;
+        //     }
+        // })
+        // .catch(err => {
+        //     document.getElementById("response").innerText = "خطا در ارتباط با سرور!";
+        // });
+    }
+
+</script>
+
+</body>
+</html>
