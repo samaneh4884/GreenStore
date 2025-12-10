@@ -3,6 +3,7 @@ package com.example.GreenStore.Controllers;
 import com.example.GreenStore.models.Product;
 import com.example.GreenStore.models.Store;
 import com.example.GreenStore.models.User;
+import com.example.GreenStore.models.UserStore;
 import com.example.GreenStore.repositories.StoreRepository;
 import com.example.GreenStore.repositories.UserRepository;
 import com.example.GreenStore.security.JwtUtil;
@@ -12,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -136,6 +139,21 @@ public class UserController {
             return new ResponseEntity<>("Error changing password", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping("/getUserStores")
+    public ResponseEntity<List<Store>> getUserStores(@RequestHeader("Authorization") String token) {
+        List<Store> stores = new ArrayList<>();
+        User user = userRepository.findByUsername(jwtUtil.extractUsername(token.replace("Bearer ", ""))).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        for (UserStore userStore: user.getUserStores()) {
+            stores.add(userStore.getStore());
+        }
+        return new ResponseEntity<>(stores, HttpStatus.OK);
+    }
+
+
+    //change logic of user and store
     //search products by mood
     //shopping cart
     //store dashboard

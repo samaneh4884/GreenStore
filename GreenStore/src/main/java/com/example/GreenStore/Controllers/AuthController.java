@@ -26,6 +26,10 @@ public class AuthController {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             return new ResponseEntity<>("Username is already in use", HttpStatus.BAD_REQUEST);
         }
+        if (user.getUsername() == null || user.getUsername().isEmpty() || user.getPassword() == null || user.getPassword().isEmpty()
+        || user.getEmail() == null || user.getEmail().isEmpty() || user.getAddress() == null || user.getAddress().isEmpty()) {
+            return new ResponseEntity<>("Username or password or email or address cannot be empty", HttpStatus.BAD_REQUEST);
+        }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -48,28 +52,19 @@ public class AuthController {
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
-    @PostMapping("/SignUpStore")
-    public ResponseEntity<String> SignUpStore(@RequestBody Store store) {
-        if (storeRepository.findByName(store.getName()).isPresent()) {
-            return new ResponseEntity<>("name is already in use", HttpStatus.BAD_REQUEST);
-        }
-        storeRepository.save(store);
-        return new ResponseEntity<>("Store created", HttpStatus.CREATED);
-    }
-
-    @GetMapping("/LoginStore")
-    public ResponseEntity<String> LoginStore(@RequestParam String name, @RequestParam String password) {
-        Store store = storeRepository.findByName(name).orElse(null);
-        if (store == null) {
-            return new ResponseEntity<>("store not found", HttpStatus.NOT_FOUND);
-        }
-        if (!store.getPassword().equals(password)) {
-            return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
-        }
-
-        String token = jwtUtil.generateToken(name, password);
-        return new ResponseEntity<>(token, HttpStatus.OK);
-    }
+//    @GetMapping("/LoginStore")
+//    public ResponseEntity<String> LoginStore(@RequestParam String name, @RequestParam String password) {
+//        Store store = storeRepository.findByName(name).orElse(null);
+//        if (store == null) {
+//            return new ResponseEntity<>("store not found", HttpStatus.NOT_FOUND);
+//        }
+//        if (!store.getPassword().equals(password)) {
+//            return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
+//        }
+//
+//        String token = jwtUtil.generateToken(name, password);
+//        return new ResponseEntity<>(token, HttpStatus.OK);
+//    }
 
 
 
@@ -77,6 +72,10 @@ public class AuthController {
     @DeleteMapping("/deleteAllUsers")
     public void deleteAllUsers() {
         userRepository.deleteAll();
+    }
+    @DeleteMapping("/deleteAllStores")
+    public void deleteAllStores() {
+        storeRepository.deleteAll();
     }
 
 

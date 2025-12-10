@@ -1,5 +1,7 @@
 let cart = [];
-
+function goToSignUpStore(){
+    window.location.href = "signup-store.html";
+}
 async function loadDashboard() {
     await loadBalance();
     await loadProducts();
@@ -84,6 +86,7 @@ function loadCart() {
         list.appendChild(li);
     });
 }
+
 
 window.onload = async () => {
     await loadBalance();

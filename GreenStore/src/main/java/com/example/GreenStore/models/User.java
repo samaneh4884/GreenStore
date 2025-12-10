@@ -1,10 +1,15 @@
 package com.example.GreenStore.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.nio.file.attribute.UserPrincipal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -31,6 +36,20 @@ public class User {
     private String address;
 
     private StringBuilder OrderHistory;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<UserStore> userStores = new ArrayList<>();
+
+    public Store getStoreByName(String name) {
+        for (UserStore userStore : userStores) {
+            if (userStore.getStore().getName().equals(name)) {
+                return userStore.getStore();
+            }
+        }
+        return null;
+    }
+
 
 
 

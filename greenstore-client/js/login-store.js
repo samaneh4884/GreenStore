@@ -18,7 +18,7 @@ async function loginStore() {
             messageDiv.style.color = "green";
             messageDiv.innerText = "ورود موفق!";
 
-            // setTimeout(()=> window.location.href="store-dashboard.html", 1500);
+            setTimeout(()=> window.location.href="storeDashboard.html", 1500);
         } else {
             const text = await res.text();
             messageDiv.style.color = "red";

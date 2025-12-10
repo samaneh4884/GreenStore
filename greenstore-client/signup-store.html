@@ -9,10 +9,11 @@
 <div class="form-container">
     <h2>ثبت نام فروشگاه</h2>
     <input type="text" id="name" placeholder="نام فروشگاه">
-    <input type="password" id="password" placeholder="رمز عبور">
+    <input type="password" id="password" placeholder="رمز عبور شما">
     <input type="text" id="address" placeholder="آدرس">
     <input type="text" id="phone" placeholder="شماره تماس">
     <input type="text" id="description" placeholder="توضیحات">
+
 
     <button onclick="registerStore()">ثبت نام</button>
     <div id="response" class="message"></div>
@@ -20,8 +21,15 @@
 
 <script>
 const API_BASE = "http://localhost:8080";
-
 async function registerStore() {
+    const token = localStorage.getItem("userToken");
+    const messageDiv = document.getElementById("response");
+
+    if (!token) {
+        messageDiv.innerText = "ابتدا وارد حساب شوید.";
+        return;
+    }
+
     const store = {
         name: document.getElementById("name").value,
         password: document.getElementById("password").value,
@@ -31,26 +39,31 @@ async function registerStore() {
     };
 
     try {
-        const res = await fetch(`${API_BASE}/auth/SignUpStore`, {
+        const res = await fetch(`${API_BASE}/store/SignUpStore`, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify(store)
         });
 
         const text = await res.text();
-        const messageDiv = document.getElementById("response");
-        if(res.ok){
+
+        if (res.ok) {
             messageDiv.style.color = "green";
             messageDiv.innerText = text;
-            setTimeout(()=> window.location.href="index.html", 1500);
+            setTimeout(() => window.location.href = "dashboard.html", 1500);
         } else {
             messageDiv.style.color = "red";
             messageDiv.innerText = text;
         }
-    } catch(err) {
-        document.getElementById("response").innerText = "خطا در ارتباط با سرور";
+
+    } catch (err) {
+        messageDiv.innerText = "خطا در ارتباط با سرور.";
     }
 }
+
 </script>
 </body>
 </html>

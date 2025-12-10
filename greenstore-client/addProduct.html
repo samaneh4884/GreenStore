@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>افزودن محصول جدید</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: "IRANSans", sans-serif;
+      background: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .form-box {
+      width: 400px;
+      background: #fff;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2b8a3e;
+      margin-bottom: 20px;
+    }
+
+    input, textarea {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    textarea {
+      height: 80px;
+      resize: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background: #2b8a3e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1f6d2b;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="form-box">
+  <h2>افزودن محصول جدید</h2>
+
+  <input type="text" id="name" placeholder="نام محصول">
+  <input type="number" id="price" placeholder="قیمت">
+  <input type="number" id="quantity" placeholder="موجودی اولیه">
+  <label>حال و هوا (mood):</label>
+  <select id="mood">
+    <option value="happy">all</option>
+    <option value="">energetic</option>
+    <option value="happy">boring</option>
+    <option value="happy">sad</option>
+    <option value="happy">happy</option>
+  </select>
+  <textarea id="description" placeholder="توضیحات محصول"></textarea>
+
+  <label style="margin-top:15px; display:block;">تصویر محصول:</label>
+  <input type="file" id="texture" accept="image/*">
+
+  <button onclick="addProduct()">ثبت محصول</button>
+
+  <div id="msg" class="message"></div>
+</div>
+
+<script src="js/addProduct.js"></script>
+
+</body>
+</html>
