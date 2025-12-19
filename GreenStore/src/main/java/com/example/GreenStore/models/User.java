@@ -49,6 +49,22 @@ public class User {
         }
         return null;
     }
+    public void deleteStore(Long storeId) {
+        for (UserStore userStore : userStores) {
+            if (userStore.getStore().getId().equals(storeId)) {
+                userStores.remove(userStore);
+                break;
+            }
+        }
+    }
+    public boolean containProduct(Product product) {
+        for (UserStore userStore : userStores) {
+            if (product.getStoreId().equals(userStore.getStore().getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 

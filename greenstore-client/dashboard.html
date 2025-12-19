@@ -3,49 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <title>داشبورد کاربر</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
-<div class="form-container">
-    <h2>داشبورد کاربری</h2>
 
-    <div>
-        <h3>موجودی: <span id="balance">0</span> تومان</h3>
+<header class="topbar">
+    <div class="search-wrapper">
+        <input type="text" id="search" placeholder="جستجوی محصول...">
+    </div>
+
+    <select id="moodFilter">
+        <option value="">all</option>
+        <option value="happy">happy</option>
+        <option value="sad">sad</option>
+        <option value="boring">boring</option>
+        <option value="energetic">energetic</option>
+    </select>
+
+    <button onclick="searchProducts()">جستجو</button>
+</header>
+
+<div class="layout">
+
+    <main class="content">
+        <div id="productList" class="product-grid"></div>
+    </main>
+
+    <aside class="sidebar">
+        <h2>داشبورد</h2>
+
+        <div class="balance-box">
+            موجودی:
+            <span id="balance">0</span> تومان
+        </div>
+
         <button onclick="increaseBalance()">افزایش موجودی</button>
-    </div>
+        <button onclick="goToSignUpStore()">ساخت فروشگاه</button>
+        <button onclick="location.href='userStores.html'">فروشگاه‌های من</button>
+        <button onclick="location.href='userInfo.html'">اطلاعات کاربری</button>
+        <button onclick="showOrderHistory()">تاریخچه سفارشات شما</button>
+        <div id="orderHistoryModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeOrderHistory()">❌</span>
+                <h3>تاریخچه سفارشات</h3>
+                <ul id="orderHistoryList"></ul>
+            </div>
+        </div>
 
-    <div>
-        <h3>جستجو و فیلتر محصولات</h3>
-        <input type="text" id="search" placeholder="نام کالا">
-        <select id="moodFilter">
-            <option value="">all</option>
-            <option value="happy">happy</option>
-            <option value="sad">sad</option>
-            <option value="boring">boring</option>
-            <option value="energitic">energetic</option>
-        </select>
-        <button onclick="searchProducts()">جستجو</button>
-    </div>
+        <hr>
 
-    <div>
-        <button onclick="searchProducts()">سبد خرید</button>
+        <h3>سبد خرید</h3>
         <ul id="cartList"></ul>
-    </div>
-    <div>
-        <button onclick="goToSignUpStore()">ساخت فروشگاه جدید</button>
-        <ul id="create new store"></ul>
-    </div>
-
-    <div>
-        <button onclick="window.location.href='userInfo.html'">
-            اطلاعات کاربری
-        </button>
-    </div>
-    <div>
-        <button onclick="window.location.href='userStores.html'">
-            فروشگاه های شما
-        </button>
-    </div>
+        <button id="checkoutBtn" onclick="checkoutCart()">نهایی کردن خرید</button>
+    </aside>
 
 </div>
 

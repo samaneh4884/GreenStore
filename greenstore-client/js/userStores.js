@@ -1,4 +1,7 @@
 const apiURL = "http://localhost:8080/user/getUserStores";
+const API = "http://localhost:8080";
+const token = localStorage.getItem("userToken");
+
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchStores();
@@ -53,10 +56,27 @@ function renderStores(stores) {
                 <button class="store-btn" onclick="openStore(${store.id})">
                     ورود به فروشگاه
                 </button>
+                <button class="store-btn" onclick="deleteStore(${store.id})">
+                    حذف فروشگاه
+                </button>
             </div>
         `;
     });
 }
+async function deleteStore(storeId) {
+    await fetch(
+        `${API}/store/deleteStore?storeId=${storeId}`,
+        {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        }
+    );
+
+    fetchStores();
+}
+
 
 function openStore(id) {
     window.location.href = `storePage.html?id=${id}`;

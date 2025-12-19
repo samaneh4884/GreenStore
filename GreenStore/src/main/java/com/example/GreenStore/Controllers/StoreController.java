@@ -54,74 +54,61 @@ public class StoreController {
         userRepository.save(user);
         return new ResponseEntity<>("Store created", HttpStatus.CREATED);
     }
+    @DeleteMapping("/deleteProduct")
+    public ResponseEntity<String> deleteProduct(@RequestHeader("Authorization") String token, @RequestParam Long storeId, @RequestParam Long productId) {
+        if (userRepository.findByUsername(jwtUtil.extractUsername(token.replace("Bearer ", ""))).isEmpty()) {
+            return new ResponseEntity<>("user not found please as the first loggedIn", HttpStatus.NOT_FOUND);
+        }
+        if (productRepository.findById(productId).isPresent() && storeRepository.findById(storeId).isPresent()) {
+            Product product = productRepository.findById(productId).get();
+            Store store = storeRepository.findById(storeId).get();
+            store.deleteProductById(productId);
+            productRepository.delete(product);
+            storeRepository.save(store);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>("product or store not found", HttpStatus.NOT_FOUND);
+    }
+    @DeleteMapping("/deleteStore")
+    public ResponseEntity<String> deleteStore(@RequestHeader("Authorization") String token, @RequestParam Long storeId) {
+        if (userRepository.findByUsername(jwtUtil.extractUsername(token.replace("Bearer ", ""))).isEmpty()) {
+            return new ResponseEntity<>("user not found please as the first loggedIn", HttpStatus.NOT_FOUND);
+        }
+        if (storeRepository.findById(storeId).isPresent()) {
+            Store store = storeRepository.findById(storeId).get();
+            for (StoreProduct storeProduct : store.getProducts()) {
+                productRepository.delete(storeProduct.getProduct());
+            }
+            User user = userRepository.findByUsername(jwtUtil.extractUsername(token.replace("Bearer ", ""))).get();
+            user.deleteStore(storeId);
+
+            storeRepository.delete(store);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>("product or store not found", HttpStatus.NOT_FOUND);
+    }
+    @PostMapping("/changeQuantity")
+    public ResponseEntity<String> changeQuantity(@RequestHeader("Authorization") String token, @RequestParam Long storeId, @RequestParam Long productId, @RequestParam int quantity) {
+        if (userRepository.findByUsername(jwtUtil.extractUsername(token.replace("Bearer ", ""))).isEmpty()) {
+            return new ResponseEntity<>("user not found please as the first loggedIn", HttpStatus.NOT_FOUND);
+        }
+        if (productRepository.findById(productId).isPresent() && storeRepository.findById(storeId).isPresent()) {
+            Product product = productRepository.findById(productId).get();
+            Store store = storeRepository.findById(storeId).get();
+            product.setQuantity(product.getQuantity() + quantity);
+            productRepository.save(product);
+            storeRepository.save(store);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>("product or store not found", HttpStatus.NOT_FOUND);
+    }
 
 
-//    @PostMapping("/editProduct")
-//    public ResponseEntity<String> editProduct(@RequestHeader("Authorization") String token
-//            , @RequestBody Product product) {
-//        String name = jwtUtil.extractUsername(token.replace("Bearer ", ""));
-//        Store store;
-//        if (storeRepository.findByName(name).isPresent()) {
-//            store = storeRepository.findByName(name).get();
-//        } else
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//
-//        if (store.getProductByName(product.getName()) != null) {
-//            store.getProductByName(product.getName()).setDescription(product.getDescription());
-//            store.getProductByName(product.getName()).setMood(product.getMood());
-//            store.getProductByName(product.getName()).setTexture(product.getTexture());
-//            store.getProductByName(product.getName()).setPrice(product.getPrice());
-//            store.getProductByName(product.getName()).setQuantity(product.getQuantity());
-//            store.getProductByName(product.getName()).setStoreName(product.getStoreName());
-//            return new ResponseEntity<>("Product updated", HttpStatus.OK);
-//        }
-//        StoreProduct storeProduct = new StoreProduct();
-//        storeProduct.setStore(store);
-//        storeProduct.setProduct(product);
-//        store.getProducts().add(storeProduct);
-//        return new ResponseEntity<>("Product added", HttpStatus.OK);
-//    }
 
-//    @PostMapping("/addProduct")
-//    public ResponseEntity<String> AddOrUpdateProduct(@RequestHeader("Authorization") String token
-//            , @RequestBody Product product,@RequestParam Long storeId,@RequestParam("file") MultipartFile file) throws IOException {
-//        if (userRepository.findByUsername(jwtUtil.extractUsername(token.replace("Bearer ", ""))).isEmpty()) {
-//            return new ResponseEntity<>("user not found please as the first loggedIn", HttpStatus.BAD_REQUEST);
-//        }
-//        Store store;
-//        if (storeRepository.findById(storeId).isPresent()) {
-//            store = storeRepository.findById(storeId).get();
-//        } else
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//
-
-    /// /        if (store.getProductByName(product.getName()) != null) {
-    /// /            store.getProductByName(product.getName()).setDescription(product.getDescription());
-    /// /            store.getProductByName(product.getName()).setMood(product.getMood());
-    /// /            store.getProductByName(product.getName()).setTexture(product.getTexture());
-    /// /            store.getProductByName(product.getName()).setPrice(product.getPrice());
-    /// /            store.getProductByName(product.getName()).setQuantity(product.getQuantity());
-    /// /            store.getProductByName(product.getName()).setStoreName(product.getStoreName());
-    /// /            return new ResponseEntity<>("Product updated", HttpStatus.OK);
-    /// /        }
-//        String uploadDir = "uploads/";
-//        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-//        Path path = Paths.get(uploadDir + fileName);
-//        Files.createDirectories(path.getParent());
-//        Files.write(path, file.getBytes());
-//        product.setTexture(path.toString());
-//        productRepository.save(product);
-//        StoreProduct storeProduct = new StoreProduct();
-//        storeProduct.setStore(store);
-//        storeProduct.setProduct(product);
-//        store.getProducts().add(storeProduct);
-//        storeRepository.save(store);
-//        return new ResponseEntity<>("Product added", HttpStatus.OK);
-//    }
     @PostMapping("/addProduct")
     public ResponseEntity<String> addOrUpdateProduct(
             @RequestHeader("Authorization") String token,
-            @RequestParam("product") String productJson, // JSON محصول به صورت رشته
+            @RequestParam("product") String productJson,
             @RequestParam("storeId") Long storeId,
             @RequestParam(value = "file", required = false) MultipartFile file
     ) throws IOException {
@@ -130,9 +117,14 @@ public class StoreController {
         if (userRepository.findByUsername(username).isEmpty()) {
             return new ResponseEntity<>("User not found. Please login first.", HttpStatus.BAD_REQUEST);
         }
+        if (storeRepository.findById(storeId).isEmpty()) {
+            return new ResponseEntity<>("Store not found. Please login first.", HttpStatus.BAD_REQUEST);
+        }
 
         ObjectMapper mapper = new ObjectMapper();
         Product product = mapper.readValue(productJson, Product.class);
+        product.setStoreName(storeRepository.findById(storeId).get().getName());
+        product.setStoreId(storeRepository.findById(storeId).get().getId());
 
         Optional<Store> storeOpt = storeRepository.findById(storeId);
         if (storeOpt.isEmpty()) {
@@ -191,6 +183,7 @@ public class StoreController {
                 .map(p -> new ProductDTO(
                         p.getId(),
                         p.getStoreId(),
+                        p.getStoreName(),
                         p.getName(),
                         p.getDescription(),
                         p.getPrice(),
@@ -204,22 +197,7 @@ public class StoreController {
     }
 
 
-//    @PostMapping("/decreaseQuantity")
-//    public ResponseEntity<String> decreaseQuantity(@RequestHeader("Authorization") String token,
-//                                                   @RequestParam Long productId) {
-//        Product product = productRepository.findById(productId).orElseThrow();
-//        if (product.getQuantity() > 0) product.setQuantity(product.getQuantity() - 1);
-//        productRepository.save(product);
-//        return ResponseEntity.ok("Quantity decreased");
-//    }
-//
-//    @DeleteMapping("/removeProduct")
-//    public ResponseEntity<String> removeProduct(@RequestHeader("Authorization") String token,
-//                                                @RequestParam Long productId) {
-//        Product product = productRepository.findById(productId).orElseThrow();
-//        productRepository.delete(product);
-//        return ResponseEntity.ok("Product removed");
-//    }
+
 
 
 }

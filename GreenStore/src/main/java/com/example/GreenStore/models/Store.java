@@ -48,6 +48,14 @@ public class Store {
         }
         return null;
     }
+    public void deleteProductById(Long id) {
+        for (StoreProduct product : products) {
+            if (product.getProduct().getId().equals(id)) {
+                products.remove(product);
+                break;
+            }
+        }
+    }
 
 
 }

@@ -18,6 +18,8 @@ public class Product {
 
     private Long storeId;
 
+    private String storeName;
+
     @Column(unique = true)
     private String name;
 

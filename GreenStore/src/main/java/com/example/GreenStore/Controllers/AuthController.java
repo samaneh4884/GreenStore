@@ -4,6 +4,7 @@ import com.example.GreenStore.models.Store;
 import com.example.GreenStore.models.User;
 import com.example.GreenStore.repositories.StoreRepository;
 import com.example.GreenStore.repositories.UserRepository;
+import com.example.GreenStore.repositories.productRepository;
 import com.example.GreenStore.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
+    private final productRepository productRepository;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -76,6 +78,10 @@ public class AuthController {
     @DeleteMapping("/deleteAllStores")
     public void deleteAllStores() {
         storeRepository.deleteAll();
+    }
+    @DeleteMapping("/deleteAllProducts")
+    public void deleteAllProducts() {
+        productRepository.deleteAll();
     }
 
 

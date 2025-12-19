@@ -1,0 +1,149 @@
+* {
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f4fdf7;
+}
+.topbar {
+    background: #2e7d32;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.search-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.search-wrapper input {
+    width: 60%;
+    max-width: 500px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+}
+
+.topbar select,
+.topbar button {
+    margin-left: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+}
+
+.layout {
+    display: flex;
+    height: calc(100vh - 60px);
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.sidebar {
+    width: 260px;
+    background: #1b5e20;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    margin-top: 0;
+}
+
+.balance-box {
+    margin-bottom: 10px;
+}
+
+.sidebar button {
+    width: 100%;
+    margin: 6px 0;
+    padding: 10px;
+    background: #66bb6a;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.sidebar hr {
+    margin: 15px 0;
+    border-color: rgba(255,255,255,0.3);
+}
+
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.product-card {
+    background: white;
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+}
+
+.product-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.product-card h4 {
+    margin: 10px 0 5px;
+}
+
+.product-card button {
+    background: #2e7d32;
+    color: white;
+    border: none;
+    padding: 8px;
+    width: 100%;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.order-history-item {
+    background: #002afd;
+    margin-bottom: 8px;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    font-size: 14px;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-height: 70%;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 18px;
+}
+

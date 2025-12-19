@@ -1,11 +1,9 @@
 package com.example.GreenStore.Controllers;
 
-import com.example.GreenStore.models.Product;
-import com.example.GreenStore.models.Store;
-import com.example.GreenStore.models.User;
-import com.example.GreenStore.models.UserStore;
+import com.example.GreenStore.models.*;
 import com.example.GreenStore.repositories.StoreRepository;
 import com.example.GreenStore.repositories.UserRepository;
+import com.example.GreenStore.repositories.productRepository;
 import com.example.GreenStore.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +25,7 @@ public class UserController {
     private final StoreRepository storeRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final com.example.GreenStore.repositories.productRepository productRepository;
 
     @PostMapping("/buy")
     public ResponseEntity<String> buy(@RequestHeader("Authorization") String token, @RequestParam String storeName
@@ -152,16 +152,164 @@ public class UserController {
         return new ResponseEntity<>(stores, HttpStatus.OK);
     }
 
+    @GetMapping("/getAllProducts")
+    public ResponseEntity<List<ProductDTO>> getAllProducts(@RequestHeader("Authorization") String token) {
+        String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        List<Product> products2 = productRepository.findAll();
+        List<Product> products3 = new ArrayList<>(List.of());
+        for (Product product: products2) {
+            if (!user.containProduct(product)) {
+                products3.add(product);
+            }
+        }
+        List<ProductDTO> products = products3.stream()
+                .map(p -> new ProductDTO(
+                        p.getId(),
+                        p.getStoreId(),
+                        p.getStoreName(),
+                        p.getName(),
+                        p.getDescription(),
+                        p.getPrice(),
+                        p.getMood(),
+                        p.getTexture(),
+                        p.getQuantity()
+                ))
+                .toList();
 
-    //change logic of user and store
-    //search products by mood
-    //shopping cart
-    //store dashboard
-    //add product
+        return ResponseEntity.ok(products);
+    }
+
+
+    @GetMapping("/getFilterProducts")
+    public ResponseEntity<List<ProductDTO>> getFilterProducts(@RequestHeader("Authorization") String token,@RequestParam String search,@RequestParam String mood) {
+        String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        List<Product> products1 = productRepository.findAll();
+        List<Product> products2 = new ArrayList<>(List.of());
+        if (!mood.equals("all") && !mood.isEmpty()) {
+            for (Product product : products1) {
+                if (product.getMood().equals(mood)) {
+                    products2.add(product);
+                }
+            }
+        }else {
+            products2.addAll(products1);
+        }
+        List<Product> products4 = new ArrayList<>(List.of());
+        if (!search.isEmpty()) {
+            for (Product product : products2) {
+                if (product.getName().toLowerCase().trim().startsWith(search.toLowerCase().trim()) ||
+                        product.getDescription().toLowerCase().trim().startsWith(search.toLowerCase().trim()) ||
+                        product.getStoreName().toLowerCase().trim().startsWith(search.toLowerCase().trim())) {
+                    products4.add(product);
+                }
+            }
+        }
+        else {
+            products4.addAll(products2);
+        }
+        List<Product> products3 = new ArrayList<>(List.of());
+        for (Product product: products4) {
+            if (!user.containProduct(product)) {
+                products3.add(product);
+            }
+        }
+        List<ProductDTO> products = products3.stream()
+                .map(p -> new ProductDTO(
+                        p.getId(),
+                        p.getStoreId(),
+                        p.getStoreName(),
+                        p.getName(),
+                        p.getDescription(),
+                        p.getPrice(),
+                        p.getMood(),
+                        p.getTexture(),
+                        p.getQuantity()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(products);
+    }
+    @PostMapping("/checkout")
+    public ResponseEntity<?> checkout(@RequestHeader("Authorization") String token,@RequestBody List<CartItemDTO> cartItems) {
+        User user = userRepository.findByUsername(jwtUtil.extractUsername(token.replace("Bearer ", ""))).isPresent()
+                ? userRepository.findByUsername(jwtUtil.extractUsername(token.replace("Bearer ", ""))).get() : null;
+        if (user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        int totalPrice = cartItems.stream()
+                .mapToInt(item -> item.getPrice() * item.getQuantity())
+                .sum();
+
+        if (user.getBalance() < totalPrice) {
+            Map<String, String> error = new HashMap<>();
+            error.put("message", "موجودی کارت شما کافی نیست!");
+            return ResponseEntity.badRequest().body(error);
+        }
+
+        user.setBalance(user.getBalance() - totalPrice);
+        userRepository.save(user);
+
+        for (CartItemDTO item : cartItems) {
+            Product product = productRepository.findById(item.getProductid())
+                    .orElseThrow(() -> new RuntimeException("محصول یافت نشد: " + item.getName()));
+
+            if (product.getQuantity() < item.getQuantity()) {
+                return ResponseEntity.badRequest().body("محصول تمام شده: " + product.getName());
+            }
+
+            product.setQuantity(product.getQuantity() - item.getQuantity());
+            productRepository.save(product);
+            Store store = storeRepository.findById(item.getStoreid()).get();
+            storeRepository.save(store);
+        }
+
+        StringBuilder history = new StringBuilder(user.getOrderHistory() != null ? user.getOrderHistory() : "");
+
+        history.append("تاریخ: ").append(LocalDateTime.now())
+                .append(" | خرید: ");
+
+        for (CartItemDTO item : cartItems) {
+            history.append(item.getName())
+                    .append(" x").append(item.getQuantity())
+                    .append(", ");
+        }
+
+        if (!cartItems.isEmpty()) {
+            history.setLength(history.length() - 2);
+        }
+
+        history.append("\n");
+
+        user.setOrderHistory(history);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("خرید با موفقیت انجام شد");
+    }
+    @GetMapping("/getOrderHistory")
+    public ResponseEntity<String> getOrderHistory(@RequestHeader("Authorization") String token) {
+        String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(user.getOrderHistory().toString());
+    }
+
+}
+
     //edit product
     //remove product
+
+    //store dashboard
+    //search products by mood
+    //shopping cart
     //buy product
+    //history of orders
+
+
+    //comment
     
 
 
-}
+

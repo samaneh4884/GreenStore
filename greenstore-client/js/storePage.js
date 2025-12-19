@@ -69,6 +69,7 @@ function renderProducts(products) {
                 <img src="${imageUrl}" alt="${p.name}" />
 
                 <h3>${p.name}</h3>
+                <p><strong>توضیحات:</strong> ${p.description} </p>
                 <p><strong>قیمت:</strong> ${p.price} تومان</p>
                 <p><strong>موجودی:</strong> ${p.quantity}</p>
 
@@ -86,34 +87,29 @@ function renderProducts(products) {
 }
 
 async function changeQuantity(id, amount) {
-    await fetch(`${API}/product/changeQuantity`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({
-            productId: id,
-            storeId: storeId,
-            amount: amount
-        })
-    });
+    await fetch(
+        `${API}/store/changeQuantity?storeId=${storeId}&productId=${id}&quantity=${amount}`,
+        {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        }
+    );
 
     fetchProducts();
 }
 
-async function deleteProduct(id) {
-    await fetch(`${API}/product/deleteProduct`, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({
-            productId: id,
-            storeId: storeId
-        })
-    });
+async function deleteProduct(productId) {
+    await fetch(
+        `${API}/store/deleteProduct?storeId=${storeId}&productId=${productId}`,
+        {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        }
+    );
 
     fetchProducts();
 }

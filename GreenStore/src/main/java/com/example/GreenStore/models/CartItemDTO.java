@@ -1,4 +1,5 @@
 package com.example.GreenStore.models;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,15 +9,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO {
-    private Long id;
-    private Long storeId;
+public class CartItemDTO {
+    private Long storeid;
+    private Long productid;
     private String storeName;
     private String name;
-    private String description;
-    private double price;
-    private String mood;
-    private String texture;
+    private int price;
     private int quantity;
-
 }
