@@ -64,6 +64,16 @@ function renderProducts(products) {
     products.forEach(p => {
         const relativePath = p.texture.replace(/\\/g, '/');
         const imageUrl = `/../${relativePath}`;
+        let preorder = "";
+        if (p.preorder) {
+            preorder = '<p><strong> پیش فروش </strong></p>';
+        }
+        let sellStarter = "";
+        if (p.preorder) {
+            sellStarter = `<button class="btn btn-sellStarter" onclick="sellStarter(${p.id})">آغاز فروش</button>`;
+        }
+
+
         container.innerHTML += `
             <div class="product-card">
                 <img src="${imageUrl}" alt="${p.name}" />
@@ -72,12 +82,16 @@ function renderProducts(products) {
                 <p><strong>توضیحات:</strong> ${p.description} </p>
                 <p><strong>قیمت:</strong> ${p.price} تومان</p>
                 <p><strong>موجودی:</strong> ${p.quantity}</p>
-
+                ${preorder}
                 <div class="controls">
                     <button class="btn btn-inc" onclick="changeQuantity(${p.id}, +1)">+</button>
                     <button class="btn btn-dec" onclick="changeQuantity(${p.id}, -1)">-</button>
                 </div>
-
+                ${sellStarter}
+                <button class="btn btn-comment" onclick="openComments(${p.id})
+                
+                ">نظرات کاربران</button>
+                
                 <button class="btn btn-del" onclick="deleteProduct(${p.id})">
                     حذف محصول
                 </button>
@@ -117,3 +131,47 @@ async function deleteProduct(productId) {
 function goToAddProduct() {
     window.location.href = `addProduct.html?id=${storeId}`;
 }
+function openComments(productId) {
+    currentProductId = productId;
+    document.getElementById("commentModal").classList.remove("hidden");
+    loadComments();
+}
+
+function closeComments() {
+    document.getElementById("commentModal").classList.add("hidden");
+}
+async function loadComments() {
+    const res = await fetch(`${API}/user/comments?productId=${currentProductId}`, {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    });
+    const comments = await res.json();
+
+    const list = document.getElementById("commentsList");
+    list.innerHTML = "";
+
+    comments.forEach(c => {
+        list.innerHTML += `
+            <div class="comment">
+                <strong>${c.username}</strong>
+                <div>${c.text}</div>
+            </div>
+        `;
+    });
+}
+async function sellStarter(productId){
+    await fetch(
+        `${API}/store/sellStarter?storeId=${storeId}&productId=${productId}`,
+        {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        }
+    );
+
+
+    fetchProducts();
+}
+

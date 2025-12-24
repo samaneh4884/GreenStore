@@ -42,7 +42,7 @@
         <button onclick="location.href='userStores.html'">فروشگاه‌های من</button>
         <button onclick="location.href='userInfo.html'">اطلاعات کاربری</button>
         <button onclick="showOrderHistory()">تاریخچه سفارشات شما</button>
-        <div id="orderHistoryModal" class="modal">
+        <div id="orderHistoryModal" class="modal hidden">
             <div class="modal-content">
                 <span class="close-btn" onclick="closeOrderHistory()">❌</span>
                 <h3>تاریخچه سفارشات</h3>
@@ -56,6 +56,20 @@
         <ul id="cartList"></ul>
         <button id="checkoutBtn" onclick="checkoutCart()">نهایی کردن خرید</button>
     </aside>
+
+    <div id="commentModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>نظرات کاربران</h3>
+
+            <div id="commentsList"></div>
+
+            <textarea id="commentText" placeholder="نظر خود را بنویسید..."></textarea>
+            <button onclick="submitComment()">ثبت نظر</button>
+
+            <button class="close" onclick="closeComments()">بستن</button>
+        </div>
+    </div>
+
 
 </div>
 

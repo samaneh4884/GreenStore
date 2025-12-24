@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -197,6 +198,18 @@ public class StoreController {
 
         return ResponseEntity.ok(products);
     }
+    @PostMapping("/sellStarter")
+    public ResponseEntity<String> sellStarter(@RequestParam long storeId,@RequestParam long productId){
+        Store store = storeRepository.findById(storeId).isPresent() ? storeRepository.findById(storeId).get() : null;
+        if (store == null) return new ResponseEntity<>("Store not found.", HttpStatus.NOT_FOUND);
+        Product product =  productRepository.findById(productId).isPresent() ? productRepository.findById(productId).get() : null;
+        if (product == null) return new ResponseEntity<>("Product not found.", HttpStatus.NOT_FOUND);
+        product.setPreorder(false);
+        productRepository.save(product);
+        storeRepository.save(store);
+        return new ResponseEntity<>("Product sales started.", HttpStatus.OK);
+    }
+
 
 
 

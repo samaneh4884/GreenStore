@@ -1,6 +1,7 @@
 package com.example.GreenStore.Controllers;
 
 import com.example.GreenStore.models.*;
+import com.example.GreenStore.repositories.CommentRepository;
 import com.example.GreenStore.repositories.StoreRepository;
 import com.example.GreenStore.repositories.UserRepository;
 import com.example.GreenStore.repositories.productRepository;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class UserController {
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
+    private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final com.example.GreenStore.repositories.productRepository productRepository;
@@ -300,9 +302,9 @@ public class UserController {
         user.setOrderHistory(history);
         userRepository.save(user);
         if (temp == 1) {
-            return new ResponseEntity<>("خرید با موفقیت انجام شد به خاطر خرید از محصولات سبز 0.02 درصد از مبلغ فاکتور شما به حساب شما برگردانده شد",HttpStatus.OK);
+            return new ResponseEntity<>("خرید با موفقیت انجام شد به خاطر خرید از محصولات سبز 0.02 درصد از مبلغ فاکتور شما به حساب شما برگردانده شد \nلطفا نظر خود را در رابطه با محصولات خریداری شده در بخش مربوطه هر محصول وارد کنید با تشکر" ,HttpStatus.OK);
         }
-        return ResponseEntity.ok("خرید با موفقیت انجام شد");
+        return ResponseEntity.ok("خرید با موفقیت انجام شد\nلطفا نظر خود را در رابطه با محصولات خریداری شده در بخش مربوطه هر محصول وارد کنید با تشکر");
     }
     @GetMapping("/getOrderHistory")
     public ResponseEntity<String> getOrderHistory(@RequestHeader("Authorization") String token) {
@@ -314,6 +316,32 @@ public class UserController {
         }
         return ResponseEntity.ok(user.getOrderHistory().toString());
     }
+
+    @GetMapping("/comments")
+    public ResponseEntity<List<Comment>> getProductComments(
+            @RequestParam Long productId) {
+        return ResponseEntity.ok(
+                commentRepository.findByProductIdOrderByCreatedAtDesc(productId)
+        );
+    }
+    @PostMapping("/comments")
+    public ResponseEntity<String> addComment(
+            @RequestHeader("Authorization") String token,
+            @RequestBody Comment comment) {
+
+        String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
+        if (userRepository.findByUsername(username).isEmpty()) {
+            return new ResponseEntity<>("unauthorized", HttpStatus.UNAUTHORIZED);
+        }
+
+        comment.setUsername(username);
+        comment.setCreatedAt(LocalDateTime.now());
+
+        commentRepository.save(comment);
+        return ResponseEntity.ok("comment added");
+    }
+
+
 
 }
 

@@ -51,38 +51,47 @@ function displayProducts(products) {
         const imageUrl = `/../${relativePath}`;
         let actionHtml = "";
         let isEcoFriendly="";
-        if (p.quantity === 0) {
+        if (p.quantity === 0 && p.preorder) {
             actionHtml = `
                 <button disabled style="background:#aaa; cursor:not-allowed;">
                     اتمام موجودی
                 </button>
             `;
-        } else {
+        } else if (!p.preorder) {
             actionHtml = `
                 <button onclick="addToCart(${p.storeId},'${p.storeName}' ,${p.id},'${p.name}', ${p.price},${p.quantity})">
                     افزودن به سبد
                 </button>
             `;
-        }
-        if (p.ecoFriendly) {
-            isEcoFriendly = `
-                <button disabled style="background:#02fd00; cursor:not-allowed;">
-                    محصول دوستدار محیط زیست
-                </button>
+        } else {
+            actionHtml = `
+                <p><strong> 
+                    ایا از تولید این محصول حمایت میکنید؟نظر خود را وارد کنید 
+                </strong>
             `;
         }
 
+        let ecoRibbon = "";
+        if (p.ecoFriendly) {
+            ecoRibbon = `<div class="eco-ribbon">سازگار با محیط زیست</div>`;
+        }
+
+
 
         div.innerHTML = `
+            ${ecoRibbon}
             <img src="${imageUrl}">
             <h4>${p.name}</h4>
-            <p><strong>توضیحات:</strong> ${p.description} </p>
-            <p><strong>نام فروشگاه:</strong> ${p.storeName} </p>
+            <p><strong>توضیحات:</strong> ${p.description}</p>
+            <p><strong>نام فروشگاه:</strong> ${p.storeName}</p>
             <p><strong>قیمت:</strong> ${p.price} تومان</p>
-            <p><strong>موجودی:</strong> ${p.quantity} </p>
-            ${isEcoFriendly}
+            <p><strong>موجودی:</strong> ${p.quantity}</p>
+        
+            <button class="btn-comment" onclick="openComments(${p.id})
+            ">نظرات</button>
             ${actionHtml}
-        `;
+            `;
+
 
         list.appendChild(div);
     });
@@ -219,3 +228,57 @@ function showOrderHistory() {
 function closeOrderHistory() {
     document.getElementById("orderHistoryModal").style.display = "none";
 }
+
+let currentProductId = null;
+
+function openComments(productId) {
+    currentProductId = productId;
+    document.getElementById("commentModal").classList.remove("hidden");
+    loadComments();
+}
+
+function closeComments() {
+    document.getElementById("commentModal").classList.add("hidden");
+}
+
+async function loadComments() {
+    const res = await fetch(`${API}/user/comments?productId=${currentProductId}`, {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    });
+    const comments = await res.json();
+
+    const list = document.getElementById("commentsList");
+    list.innerHTML = "";
+
+    comments.forEach(c => {
+        list.innerHTML += `
+            <div class="comment">
+                <strong>${c.username}</strong>
+                <div>${c.text}</div>
+            </div>
+        `;
+    });
+}
+
+async function submitComment() {
+    const text = document.getElementById("commentText").value;
+    if (!text) return;
+
+    await fetch(`${API}/user/comments`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+            productId: currentProductId,
+            text: text
+        })
+    });
+
+    document.getElementById("commentText").value = "";
+    loadComments();
+}
+
