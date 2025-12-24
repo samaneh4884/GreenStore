@@ -41,9 +41,9 @@ public class User {
     @JsonIgnore
     private List<UserStore> userStores = new ArrayList<>();
 
-    public Store getStoreByName(String name) {
+    public Store getStoreById(Long id) {
         for (UserStore userStore : userStores) {
-            if (userStore.getStore().getName().equals(name)) {
+            if (userStore.getStore().getId().equals(id)) {
                 return userStore.getStore();
             }
         }

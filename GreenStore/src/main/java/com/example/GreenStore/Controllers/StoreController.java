@@ -189,7 +189,9 @@ public class StoreController {
                         p.getPrice(),
                         p.getMood(),
                         p.getTexture(),
-                        p.getQuantity()
+                        p.getQuantity(),
+                        p.isEcoFriendly(),
+                        p.isPreorder()
                 ))
                 .toList();
 

@@ -1,5 +1,6 @@
 package com.example.GreenStore.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,4 +34,8 @@ public class Product {
     private String texture;
 
     private int quantity;
+    @JsonProperty("ecoFriendly")
+    private boolean ecoFriendly;
+    @JsonProperty("preorder")
+    private boolean preorder;
 }

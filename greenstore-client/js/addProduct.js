@@ -15,6 +15,8 @@ async function addProduct() {
     const mood = document.getElementById("mood").value;
     const description = document.getElementById("description").value;
     const textureFile = document.getElementById("texture").files[0];
+    const preorder = document.getElementById('is_preorder').checked||false;
+    const ecoFriendly = document.getElementById('is_eco_friendly').checked||false;
 
     const msg = document.getElementById("msg");
 
@@ -29,8 +31,11 @@ async function addProduct() {
         price,
         quantity,
         mood,
-        description
+        description,
+        ecoFriendly,
+        preorder
     };
+    console.log("Sending product data:", product);
 
     try {
         const formData = new FormData();

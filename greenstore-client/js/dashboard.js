@@ -50,6 +50,7 @@ function displayProducts(products) {
         const relativePath = p.texture.replace(/\\/g, '/');
         const imageUrl = `/../${relativePath}`;
         let actionHtml = "";
+        let isEcoFriendly="";
         if (p.quantity === 0) {
             actionHtml = `
                 <button disabled style="background:#aaa; cursor:not-allowed;">
@@ -63,6 +64,15 @@ function displayProducts(products) {
                 </button>
             `;
         }
+        if (p.ecoFriendly) {
+            isEcoFriendly = `
+                <button disabled style="background:#02fd00; cursor:not-allowed;">
+                    محصول دوستدار محیط زیست
+                </button>
+            `;
+        }
+
+
         div.innerHTML = `
             <img src="${imageUrl}">
             <h4>${p.name}</h4>
@@ -70,6 +80,7 @@ function displayProducts(products) {
             <p><strong>نام فروشگاه:</strong> ${p.storeName} </p>
             <p><strong>قیمت:</strong> ${p.price} تومان</p>
             <p><strong>موجودی:</strong> ${p.quantity} </p>
+            ${isEcoFriendly}
             ${actionHtml}
         `;
 
@@ -150,7 +161,8 @@ async function checkoutCart() {
         });
 
         if (res.ok) {
-            alert("خرید با موفقیت انجام شد!");
+            const messageFromServer = await res.text();
+            alert(messageFromServer);
             cart = [];
             loadCart();
             await loadBalance();

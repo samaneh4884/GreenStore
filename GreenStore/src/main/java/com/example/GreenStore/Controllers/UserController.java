@@ -174,7 +174,9 @@ public class UserController {
                         p.getPrice(),
                         p.getMood(),
                         p.getTexture(),
-                        p.getQuantity()
+                        p.getQuantity(),
+                        p.isEcoFriendly(),
+                        p.isPreorder()
                 ))
                 .toList();
 
@@ -227,7 +229,9 @@ public class UserController {
                         p.getPrice(),
                         p.getMood(),
                         p.getTexture(),
-                        p.getQuantity()
+                        p.getQuantity(),
+                        p.isEcoFriendly(),
+                        p.isPreorder()
                 ))
                 .toList();
 
@@ -251,6 +255,7 @@ public class UserController {
 
         user.setBalance(user.getBalance() - totalPrice);
         userRepository.save(user);
+        int temp=0;
 
         for (CartItemDTO item : cartItems) {
             Product product = productRepository.findById(item.getProductid())
@@ -259,7 +264,16 @@ public class UserController {
             if (product.getQuantity() < item.getQuantity()) {
                 return ResponseEntity.badRequest().body("محصول تمام شده: " + product.getName());
             }
-
+            if (product.isEcoFriendly() && temp==0) {
+                temp=1;
+                user.setBalance(user.getBalance() + (double) (totalPrice * 2) /100);
+            }
+            for (User user1 : userRepository.findAll()) {
+                if (user1.getStoreById(item.getStoreid()) != null) {
+                    user1.setBalance(user1.getBalance() + (item.getQuantity()*item.getPrice()));
+                    break;
+                }
+            }
             product.setQuantity(product.getQuantity() - item.getQuantity());
             productRepository.save(product);
             Store store = storeRepository.findById(item.getStoreid()).get();
@@ -285,7 +299,9 @@ public class UserController {
 
         user.setOrderHistory(history);
         userRepository.save(user);
-
+        if (temp == 1) {
+            return new ResponseEntity<>("خرید با موفقیت انجام شد به خاطر خرید از محصولات سبز 0.02 درصد از مبلغ فاکتور شما به حساب شما برگردانده شد",HttpStatus.OK);
+        }
         return ResponseEntity.ok("خرید با موفقیت انجام شد");
     }
     @GetMapping("/getOrderHistory")
@@ -293,6 +309,9 @@ public class UserController {
         String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (user.getOrderHistory() == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.ok(user.getOrderHistory().toString());
     }
 
