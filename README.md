@@ -5,6 +5,7 @@ Introduction:
 With the rapid expansion of e-commerce, online stores have become one of the most important tools for buying and selling goods. However, most current stores focus only on the buying and selling process and the specific needs of customers, without paying enough attention to environmental sustainability aspects.
 
 The present project aims to design and implement an intelligent and sustainable online store. In addition to common online store features (such as user registration, shopping cart, online payment, product and order management), it includes special capabilities that provide a personalized shopping experience compatible with environmental sustainability for users.
+
 Project Goals:
 
 1. Personalizing the User Purchase Experience:
@@ -18,6 +19,7 @@ The system considers users who purchase products compatible with the environment
 
 4. Pre-Selling Innovative Products:
 The store provides the possibility of pre-selling products that have not yet been produced. If the pre-order reaches a certain level, production of the product begins. This feature allows producers to ensure there is real market demand before mass production.
+
 Problems and Needs That This Software Solves:
 
 Lack of Personalization in Existing Stores:
