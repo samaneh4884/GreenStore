@@ -33,3 +33,135 @@ This store, with its rating system for eco-friendly purchases, promotes a green 
 
 High Risk of Production Without Demand Assessment:
 The pre-sale capability helps businesses ensure market acceptance and prevent unnecessary production.
+
+🛠️ Technologies Used
+
+The GreenStore project is developed using the following technologies:
+
+Java
+The main programming language used for the server-side and business logic (Backend).
+
+HTML / CSS / JavaScript
+Used for building the user interface (Frontend) and creating interactive web pages.
+
+Gradle
+A build automation and dependency management tool used for compiling and running the project.
+
+Git & GitHub
+Used for version control, source code management, and team collaboration.
+
+Related Frameworks & Technologies
+
+Spring Boot
+
+RESTful API
+
+MVC (Model–View–Controller) Architecture
+
+🧠 System Architecture
+
+The system is designed based on a Multi-Tier Web Application Architecture, which consists of the following layers:
+
+1. Presentation Layer (Frontend)
+
+Web pages developed using HTML, CSS, and JavaScript
+
+Responsible for user interaction and displaying data to users
+
+2. Business Logic Layer (Backend)
+
+Implemented using Java and Spring Boot
+
+Handles user requests and core system functionalities, including:
+
+User management
+
+Product management
+
+Shopping cart handling
+
+Product recommendations
+
+Smart and eco-friendly features of the system
+
+3. Data Layer (Database)
+
+Stores all system data, including:
+
+Users
+
+Products
+
+Orders
+
+Green (eco-friendly) reward points
+
+This architecture improves separation of concerns, scalability, maintainability, and testability of the project.
+
+▶️ How to Run the Project
+
+To run the GreenStore project locally, follow the steps below:
+
+1. Clone the Repository
+git clone https://github.com/samaneh4884/GreenStore.git
+
+
+Then navigate to the project directory:
+
+cd GreenStore
+
+2. Build and Run the Project Using Gradle
+
+(If Gradle Wrapper is available)
+
+On Linux or macOS:
+
+./gradlew build
+./gradlew run
+
+
+On Windows:
+
+gradlew.bat build
+gradlew.bat run
+
+
+⚠️ This step can also be handled automatically by IntelliJ IDEA.
+
+3. Database Configuration (PostgreSQL)
+
+Install PostgreSQL on your system.
+
+Open the following file:
+
+GreenStore/src/main/resources/application.properties
+
+
+Configure the database credentials:
+
+spring.datasource.username
+
+spring.datasource.password
+
+spring.datasource.url
+
+After completing this step, the application will be connected to the database successfully.
+
+4. Start the Server
+
+Run the main application class:
+
+GreenStore/src/main/java/com/example/GreenStore/GreenStoreApplication.java
+
+
+If all previous steps are configured correctly, the server will start successfully.
+In case of any issues, you can check the Spring Boot logs to identify and resolve errors.
+
+5. Access the User Interface
+
+After the server is running, open the following file in a web browser:
+
+GreenStore/greenstore-client/index.html
+
+
+This file serves as the starting point (entry point) of the application, allowing you to use the main features of GreenStore.
