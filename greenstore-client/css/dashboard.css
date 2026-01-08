@@ -115,6 +115,7 @@ body {
 
 .order-history-item {
     background: #002afd;
+    color : black;
     margin-bottom: 8px;
     padding: 10px;
     border-radius: 6px;

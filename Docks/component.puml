@@ -1,0 +1,126 @@
+@startuml
+!pragma useVerticalIf on
+skinparam componentStyle rectangle
+skinparam backgroundColor #F5F5F5
+skinparam component {
+    BorderColor #2E4053
+    BackgroundColor #EAEDED
+    ArrowColor #2C3E50
+    FontColor black
+    FontSize 13
+}
+
+title "نمودار معماری کامپوننت‌های سیستم فروشگاه اینترنتی هوشمند و پایدار"
+
+package "لایه نمایش (Presentation Layer)" {
+    [وب اپلیکیشن کاربر] as UserWebApp
+    [پنل مدیریت فروشگاه] as AdminPanel
+}
+
+package "لایه منطق کسب‌وکار (Business Logic Layer)" {
+    component "ماژول احراز هویت و کاربران" as AuthModule {
+        [ثبت‌نام / ورود]
+        [مدیریت پروفایل]
+        [سطح دسترسی]
+    }
+
+    component "ماژول مدیریت محصولات" as ProductModule {
+        [افزودن / ویرایش محصول]
+        [دسته‌بندی محصولات]
+        [برچسب‌های محیط زیستی]
+        [پیش‌فروش محصولات نوآورانه]
+    }
+
+    component "ماژول مدیریت سفارش‌ها" as OrderModule {
+        [سبد خرید]
+        [ثبت سفارش]
+        [پیگیری سفارش]
+        [پرداخت آنلاین]
+    }
+
+    component "ماژول شخصی‌سازی خرید" as PersonalizationModule {
+        [انتخاب حالت کاربر]
+        [پیشنهاد محصولات بر اساس حالت]
+        [تاریخچه خرید]
+        [سیستم امتیازدهی]
+    }
+
+    component "ماژول پایداری محیط زیست" as SustainabilityModule {
+        [محصولات سازگار با محیط زیست]
+        [بسته‌بندی قابل بازیافت]
+        [امتیاز سبز]
+        [تبدیل امتیاز به تخفیف]
+    }
+
+    component "ماژول نظرسنجی و بازخورد" as SurveyModule {
+        [طرح سؤال پس از خرید]
+        [تحلیل نظرات]
+        [گزارش‌گیری از رضایت]
+    }
+
+    component "ماژول گزارش‌گیری و تحلیل" as AnalyticsModule {
+        [گزارش فروش]
+        [تحلیل رفتار کاربران]
+        [پیش‌بینی تقاضا]
+    }
+}
+
+package "لایه داده (Data Layer)" {
+    component "پایگاه داده اصلی" as MainDB {
+        [جدول کاربران]
+        [جدول محصولات]
+        [جدول سفارش‌ها]
+        [جدول امتیازات سبز]
+        [جدول نظرسنجی‌ها]
+    }
+    component "حافظه نهان (Cache)" as Cache {
+        [کش محصولات پرتکرار]
+        [کش پیشنهادات شخصی‌سازی]
+    }
+    component "ذخیره فایل‌ها" as FileStorage {
+        [تصاویر محصولات]
+        [اسناد پیش‌فروش]
+    }
+}
+
+package "سرویس‌های خارجی (External Services)" {
+    [درگاه پرداخت بانکی] as PaymentGateway
+    [سرویس ایمیل / نوتیفیکیشن] as NotificationService
+    [سرویس تحلیل احساسات (اختیاری)] as SentimentAnalysisService
+}
+
+' ========== ارتباطات بین کامپوننت‌ها ==========
+UserWebApp --> AuthModule : درخواست احراز هویت
+UserWebApp --> ProductModule : مشاهده/جستجوی محصولات
+UserWebApp --> OrderModule : ثبت/پیگیری سفارش
+UserWebApp --> PersonalizationModule : انتخاب حالت خرید
+UserWebApp --> SustainabilityModule : مشاهده امتیازات سبز
+UserWebApp --> SurveyModule : پاسخ به نظرسنجی
+
+AdminPanel --> ProductModule : مدیریت محصولات
+AdminPanel --> OrderModule : مدیریت سفارش‌ها
+AdminPanel --> AnalyticsModule : مشاهده گزارشات
+AdminPanel --> SurveyModule : مدیریت نظرسنجی‌ها
+
+PersonalizationModule --> ProductModule : درخواست محصولات پیشنهادی
+SustainabilityModule --> OrderModule : اعطای امتیاز سبز
+SurveyModule --> AnalyticsModule : ارسال داده‌های نظرسنجی
+
+' ========== ارتباطات با لایه داده ==========
+AuthModule --> MainDB : ذخیره/بازیابی اطلاعات کاربران
+ProductModule --> MainDB : ذخیره/بازیابی اطلاعات محصولات
+OrderModule --> MainDB : ذخیره/بازیابی سفارش‌ها
+SustainabilityModule --> MainDB : ذخیره/بازیابی امتیازات
+SurveyModule --> MainDB : ذخیره/بازیابی نظرسنجی‌ها
+
+ProductModule --> Cache : کش محصولات پرتکرار
+PersonalizationModule --> Cache : کش پیشنهادات
+
+ProductModule --> FileStorage : آپلود/دریافت تصاویر
+
+' ========== ارتباطات با سرویس‌های خارجی ==========
+OrderModule --> PaymentGateway : درخواست پرداخت
+AuthModule --> NotificationService : ارسال ایمیل تأیید
+SurveyModule --> SentimentAnalysisService : تحلیل خودکار نظرات (اختیاری)
+
+@enduml

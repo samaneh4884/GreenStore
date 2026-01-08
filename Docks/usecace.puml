@@ -1,0 +1,105 @@
+@startuml ECommerceUseCaseDiagram
+
+left to right direction
+
+skinparam ActorStyle awesome
+skinparam usecase {
+  BackgroundColor #E6F3FF
+  BorderColor #000080
+}
+
+' --- Actors Definition ---
+actor "مشتری" as Customer
+actor "مهمان" as Guest
+actor "مدیر فروشگاه" as Admin
+actor "تأمین‌کننده" as Supplier
+actor "درگاه پرداخت" as Payment
+actor "سامانه ارسال" as Delivery
+actor "سیستم ایمیل/پیامک" as Notification
+
+' --- Use Cases Grouping ---
+rectangle "سیستم فروشگاه اینترنتی" {
+  ' --- Customer Use Cases ---
+  usecase "ثبت‌نام و ورود" as UC1
+  usecase "انتخاب پروفایل کاربری" as UC2
+  usecase "مشاهده محصولات" as UC3
+  usecase "جستجوی محصولات" as UC4
+  usecase "مشاهده جزئیات محصول" as UC5
+  usecase "مدیریت سبد خرید" as UC6
+  usecase "تکمیل خرید و پرداخت" as UC7
+  usecase "شرکت در نظرسنجی" as UC8
+  usecase "دریافت امتیاز پایدار" as UC9
+  usecase "استفاده از امتیازها" as UC10
+  usecase "ثبت پیش‌خرید" as UC11
+  usecase "پیگیری وضعیت سفارش" as UC12
+  
+  ' --- Admin Use Cases ---
+  usecase "مدیریت محصولات" as UC13
+  usecase "مدیریت موجودی" as UC14
+  usecase "مدیریت سفارش‌ها" as UC15
+  usecase "مدیریت پیش‌فروش‌ها" as UC16
+  usecase "مشاهده گزارش‌ها" as UC17
+  usecase "تنظیم سیاست‌های امتیازدهی" as UC18
+  usecase "اطلاع‌رسانی به تولیدکننده" as UC19
+  
+  ' --- External Systems Use Cases ---
+  usecase "پردازش پرداخت" as UC20
+  usecase "بروزرسانی وضعیت ارسال" as UC21
+  usecase "دریافت درخواست تولید" as UC22
+  usecase "اعلام تکمیل تولید" as UC23
+  usecase "ارسال پیام‌های اطلاع‌رسانی" as UC24
+}
+
+' --- Customer Relationships ---
+Customer --> UC1
+Customer --> UC2
+Customer --> UC3
+Customer --> UC4
+Customer --> UC5
+Customer --> UC6
+Customer --> UC7
+Customer --> UC8
+Customer --> UC9
+Customer --> UC10
+Customer --> UC11
+Customer --> UC12
+
+' --- Guest Relationships ---
+Guest --> UC3
+Guest --> UC4
+Guest --> UC5
+Guest --> UC1 : <<include>>
+
+' --- Admin Relationships ---
+Admin --> UC13
+Admin --> UC14
+Admin --> UC15
+Admin --> UC16
+Admin --> UC17
+Admin --> UC18
+Admin --> UC19
+
+' --- Supplier Relationships ---
+Supplier --> UC22
+Supplier --> UC23
+
+' --- External Systems Relationships ---
+Payment --> UC20
+Delivery --> UC21
+Notification --> UC24
+
+' --- Include Relationships ---
+UC7 --> UC20 : <<include>>
+UC12 --> UC21 : <<include>>
+UC19 --> UC24 : <<include>>
+
+' --- Extend Relationships ---
+UC16 --> UC19 : <<extend>>
+UC8 --> UC9 : <<extend>>
+
+' --- Trigger Relationships ---
+Admin --> UC19
+UC19 --> UC22 : trigger
+UC23 --> UC14 : trigger
+
+@enduml
